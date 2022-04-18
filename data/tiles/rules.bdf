@@ -1,0 +1,17 @@
+#blockworld blocks definition file
+#header
+grid:128,128,96
+bgcols:(200,140,45),(184,126,25)
+
+#structures (s:structure number,structure name, indexed directionalblocks)
+# explanation:
+#  index meaning left=1,right=2,up=4,down=8 (horizontal struct would be left+right=1+2=3)
+#  Index of first block is 0, second=1, third=2
+#   so first block(=0) means no block, second block(=1) means, struct coming from left, going to nowhere
+#   .... 16th block (=15) means, going up,down, left and right (a cross)
+s:0:roads:0,16,16,16,15,13,7,10,15,11,5,8,15,12,6,9
+s:1:walls1:0,47,47,47,42,50,43,85,42,48,41,85,42,85,85,85
+s:2:walls2:0,47,47,47,42,73,66,87,42,71,64,87,42,87,87,87
+
+#groups (p:groupnumber,group name,blocks_in_group)
+g:0:trees:1,2,3,4
