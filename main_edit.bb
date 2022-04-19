@@ -7,12 +7,10 @@ Global playfieldw=64
 Global playfieldh=64
 
 Include "loading.bb"
-Include "title.bb"
 Include "editor.bb"
-Include "gameover.bb"
 Include "loading.bb"
-Include "../lib/v1.0/keysdef.bb"
-Include "../lib/v1.3/lib_gfx3dsprites.bb"
+Include "../blitz3d.lib/v1.0/keysdef.bb"
+Include "../blitz3d.lib/v1.3/lib_gfx3dsprites.bb"
 
 
 Global g_3ds_win_width=300
