@@ -10,4 +10,4 @@ You can also just download the latest distribution here: https://github.com/Joys
 
 When compiling it, you need the file fmod.dll, to be next to your executable (.exe file).  This file can be found in the lib directory.
 
-For more info, see the Wiki.
+For more info, see the Wiki: https://github.com/JoystickAndCursorKeys/tankrampage/wiki
