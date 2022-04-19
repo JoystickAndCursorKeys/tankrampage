@@ -1,14 +1,11 @@
 Include "loading.bb"
-Include "title.bb"
-
 Include "game.bb"
 
-Include "gameover.bb"
 Include "loading.bb"
 Include "lib_BWbullets.bb"
 Include "lib_BWpixparticles.bb"
-Include "../..\lib/v1.0/keysdef.bb"
-Include "../..\lib/v1.3/lib_gfx3dsprites.bb"
+Include "../blitz3d.lib/v1.0/keysdef.bb"
+Include "../blitz3d.lib/v1.3/lib_gfx3dsprites.bb"
 
 
 Const c_trace=0
@@ -45,46 +42,6 @@ Global copperimage2
 Global copperimage3
 
 Global titleimage
-;
-; ideas
-;  weather, sandstorm, cloud shadows, wind (tumbleweeds)
-;  shake whole viewport, when collissions or big explosions
-;  trophies - when shootinh down a building, a trophy can be collected from the 
-;     building (some buildings)
-;  cant blow up flag house or garage
-;  make visible tank has flag
-;  dashboard
-;  choose tank
-; when tank blows up, leave alot of dirt(=track) particles behind
-; make cannan bullets explode at estimated distance of (you from cannon), also the explode noise
-; make tank moove pixel backwards when shooting
-; idea, different colour palletes  (when it gets darker)
-
-
-;todo
-;  
-; clear the border issues (shooting, particles, etc)
-;
-; network play -  multiple tanks (more then two)
-;
-; better "rubble" gfx
-; fix steering, so it becomes much harder to get stuck
-; harder to shoot stuff
-; helicopters
-;
-; editor for editing masks, w/o destroying previous work
-;
-; You can drive over the desert but this slows the tank down
-
-
-;-----------------------------------------------------------
-;remember
-; changing beige buildings to green
-; Hue/Sat/Lightness -> Hue36  , Sat -35
-;
-;
-;
-;
 
 
 InitLoad()
@@ -117,8 +74,6 @@ Function Title()
 	While 1=1
 		
 		SetBuffer BackBuffer()
-		;ClsColor 0,0,0
-		;Cls 
 		
 		DrawBlock titleimage,0,0
 		
@@ -128,9 +83,7 @@ Function Title()
 		SetBuffer BackBuffer()
 		DrawImage copperimage3,0,150
 		DrawImage copperimage2,0,150
-
-		;DrawBlock title,0,0
-		
+	
 		If(KeyHit(1)) Then Return 1
 		If(KeyHit (key_space)) Then
 			Return 0
@@ -213,10 +166,6 @@ Function CoppersArea(x,y)
 	g#=(255 * cx) + (0*cx2)	
 	b#=(0 * cx) + (0*cx2)
     
-
-	;r#=cx*1.0
-	;g#=cx*.7
-	;b#=cx*.1;c2
 	Color r/100,g/100,b/100
 	
 	Rect 0,t,c_width,1,1

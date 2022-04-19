@@ -4,8 +4,6 @@ Const edt_blockhonscreen=c_height/edt_blockh
 Const screenw2=c_width/2
 Const screenh2=c_height/2
 
-
-
 Global lastblockx=-1
 Global lastblocky=-1
 

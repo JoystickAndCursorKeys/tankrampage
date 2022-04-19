@@ -1,18 +1,3 @@
-; border issue
-; 1 display      -ok
-; 2 colissions world/tank - ok 
-; 2b collisions bullet/world -ok
-; 2c driveover with tank - ok
-; 2d collisions between tank and bullets
-;  fix collideBulletsWorld1 something with range!
-
-; 2d mask debug display -ok 
-; 3 bullets     -border issues
-; 4 particles   -ok but border issue left   
-; 5 3d sprites  -ok
-
-
-
 Global g_3ds_win_width=300
 Global g_3ds_win_height=400
 
@@ -135,13 +120,7 @@ Function InitLevel(level)
 	keyset_left(1)=		key_cursleft
 	keyset_right(1)=	key_cursright
 
-	;keyset_fire(2)=		82
-	;keyset_up(2)=     	72
-	;keyset_down(2)=		80;80 or 76
-	;keyset_left(2)=		75
-	;keyset_right(2)=	77
-
-
+	;keyset for player 2
 	keyset_fire(2)=		30; a
 	keyset_up(2)=     	19; r
 	keyset_down(2)=		33; f
@@ -149,7 +128,13 @@ Function InitLevel(level)
 	keyset_right(2)=	34; g
 
 
-;https://mojolabs.nz/posts.php?topic=101517
+	;alternate keyset for player 2
+	;keyset_fire(2)=		82
+	;keyset_up(2)=     	72
+	;keyset_down(2)=		80;80 or 76
+	;keyset_left(2)=		75
+	;keyset_right(2)=	77
+
 
 	
 	newdbgx=0
@@ -176,9 +161,6 @@ Function InitLevel(level)
 	floorcodetable(14)=6
 	floorcodetable(15)=0  ; does not exist
 	
-;	For t=0 To 256
-;		bytes(t)=0
-;	Next 
 	
 	mapfile$="t"+level
 	LoadOldLevel("data\level\"+mapfile$)
@@ -208,7 +190,6 @@ Function LoadOldLevel(filename$)
 			worldblks(x,y)\overlayoffsetx=0
 			worldblks(x,y)\overlayoffsety=0
 			
-			;worldblks(x,y)\effectlast=0
 			worldblks(x,y)\effect=0
 			
 			worldblks(x,y)\effect2last=0
@@ -416,8 +397,6 @@ Function InitPlayer(player.playerdef)
 	
 	player\dieing=0
 	
-	;SoundVolume player\tanksoundchannel1,0.2
-	;SoundVolume player\tanksoundchannel2,0.2
 	
 	Delete bpos 
 	
@@ -465,15 +444,15 @@ Function maketrackparticles(player.playerdef)
 End Function 
 
 Function makedustparticles(player.playerdef)
-		tspeed#=player\speed ; Sqr ((player\dx*player\dx) + (player\dy*player\dy))
+		tspeed#=player\speed 
 		
 		ticker=6
 		
 		If((tspeed>3) And ticker>3) Then
 		
 		
-			offx1=0;player\dx * 10
-			offy1=0;player\dy * 10
+			offx1=0
+			offy1=0
 			
 			ticker=0
 			For t=1 To 360 
@@ -823,25 +802,15 @@ Function handletileevents(player.playerdef,playerid,driveoverblock.blockdef)
 								xoff=xxpl + Cos(a2)*50
 								yoff=yypl + Sin(a2)*50
 	
-								;Stop 
-								;
 								
 								b.bulletdef=newSimpleBullet(xoff+blockposx+bw2,yoff+blockposy+bh2,dx,dy,0)
 								PlaySound gsfx_cannon
 							
 								
 							EndIf 
-
-						
-					
-							;EndIf 
-
-						;EndIf 
-						
+							
 						
 						EndIf 
-						;block\debug1=dx+ " "+blockposx
-						;block\debug2=dy+ " "+blockposy
 					
 						
 					EndIf 
@@ -942,12 +911,6 @@ Function handleTankInput(player.playerdef,keyset)
 			tdy=-1
 			changetarget=1
 			
-		;If(KeyDown(key_enter)) Then 
-		;
-		;	Stop 
-		;
-		;EndIf 
-
 			
 	Else If(InputDown(keyset_down(keyset))) Then 
 			tdy=1
@@ -1008,17 +971,12 @@ Function handleTankInput(player.playerdef,keyset)
 		If(player\speed > 10) Then
 			player\speed=10
 		EndIf 
-		
-		;If(turning=1) Then
-		;	speed=1
-		;EndIf 
 
 	EndIf 
 	
 	
 	If(turning=1) Then
 		
-		;prefangle=tankangle
 		player\angle=Turn(player\angle, targetangle, 5)
 				
 	EndIf 
@@ -1151,14 +1109,14 @@ Function handlecollision(player.playerdef,collission)
 						colisioninfo\driveover\mskimage=colisioninfo\driveover\image
 						
 					EndIf 
-						
-					
-					
+										
 				EndIf
 				
 			EndIf 
 			
 		EndIf 
+
+
 		If(collission=2) Then
 		
 			player\x=player\lastx - player\dx
@@ -1177,7 +1135,6 @@ Function handlecollision(player.playerdef,collission)
 				
   		        ChannelVolume channel, volume	
 
-				;makedustparticles(player.playerdef)
 
 			EndIf 
 			
@@ -1193,8 +1150,7 @@ Function handlecollision(player.playerdef,collission)
 	
 				player\dieing=c_dieing_timer
 				
-				;InitPlayer(player)
-				
+	
 				effects_explode(player\x,player\y)
 
 				PlaySound(gsfx_explosion4)				
@@ -1264,8 +1220,6 @@ Function DrawPlayfield(player.playerdef)
     Viewport x0,y0,g_winwidth,g_winheight
 	Origin x0,y0
 	
-	;SetBuffer BackBuffer()
-
 	drawworldfloor(player)
 	drawpixparticles0(player\camerax0,player\cameray0)
 	
@@ -1276,11 +1230,6 @@ Function DrawPlayfield(player.playerdef)
 
 	drawbullets(player)
 
-	;Color 210,210,150
-	;Text 20,350,"player\x="+player\x / 128+ "  player\y="+player\y/ 128
-	;Text 20,30,"maxx="+maxx+ "  maxy"+maxy
-		
-	;draw 3d playfield
    	CameraViewport g_camera,x0,y0,g_winwidth,g_winheight
 	SetRenderPosition3DSprites(-player\camerax0,-player\cameray0)
 	RenderWorld()
@@ -1292,16 +1241,10 @@ Function DrawPlayfield(player.playerdef)
 	EndIf 	
 
 	Color 255,255,255
-;	Text 0,10,"x="+Floor (player\x / 128)
-;	Text 0,25,"y="+Floor  (player\y / 128)
-
 		
 End Function 
 
 Function DrawPlayers(me.playerdef)
-
-	
-	;DrawImage(tankimg,g_winwidth2,g_winheight2+off,frame)
 
 	;Stop 
 	playfieldpixh=playfieldw*blockw
@@ -1347,23 +1290,12 @@ Function DrawPlayers(me.playerdef)
 						
 		EndIf 
 		
-		
-		;they=y
-		;If(y<0 Or y > 450) Then 
-		;	y=0
-		;EndIf 
-		
 		;remember for next loop (saves calculation time)
 		player\drawmem_x=x
 		player\drawmem_y=y
 		player\drawmem_frame=frame
 		
 		DrawImage(tankimg_shadow,x+4,y+2+off,frame)
-		
-		;Color 0,0,255
-		;Text -60+x,20+y,"rawy="+player\y+"  y0="+they0+" y="+they
-
-		;DrawImage(tankimg_shadow,g_winwidth2+4,g_winheight2+2+off,frame)
 		
 		ix=ix+1
 	Wend 
@@ -1384,7 +1316,6 @@ Function DrawPlayers(me.playerdef)
 				DrawImage(tankimg2,player\drawmem_x,player\drawmem_y,player\drawmem_frame)
 			EndIf 
 		EndIf 
-		;DrawImage(tankimg_shadow,g_winwidth2+4,g_winheight2+2+off,frame)
 		
 		ix=ix+1
 	Wend 
@@ -1394,7 +1325,7 @@ Function DrawPlayers(me.playerdef)
 End Function
 
 Function drawbullets(player.playerdef)
-	;For Each b.bulletdef
+
 	For b.bulletdef= Each bulletdef
 			
 			If(b\used=1) Then
@@ -1411,7 +1342,6 @@ End Function
 
 
 Function drawpixparticles(xoffset,yoffset)
-	;For Each b.bulletdef
 	
 	c=0
 	For b.pixpartdef= Each pixpartdef
@@ -1423,7 +1353,6 @@ Function drawpixparticles(xoffset,yoffset)
 				
 				If(b\height>0) Then
 					
-					;Stop 
 					xyoff=(b\height)/20
 					
 					brightness=Rand(100,255)
@@ -1444,14 +1373,10 @@ Function drawpixparticles(xoffset,yoffset)
 		
 			c=c+1	
 	Next 
-	
-;	Color 255,255,255
-;	Text 200,200,"pico="+c
 
 End Function 
 
 Function drawpixparticles0(xoffset,yoffset)
-	;For Each b.bulletdef
 	
 	c=0
 	For b.pixpartdef0= Each pixpartdef0
@@ -1463,7 +1388,6 @@ Function drawpixparticles0(xoffset,yoffset)
 				
 				If(b\height>0) Then
 					
-					;Stop 
 					xyoff=(b\height)/20
 					
 					
@@ -1483,21 +1407,16 @@ Function drawpixparticles0(xoffset,yoffset)
 			c=c+1	
 	Next 
 	
-;	Color 255,255,255
-;	Text 200,220,"pico0="+c
 
 End Function 
 
 Function drawworldfloor(player.playerdef)
-
-	;Stop 
 
 	xxpl=player\camerax0
 	yypl=player\cameray0
 		
 	
 	If(yypl=4460) Then
-	;	Stop 
 	EndIf 
 	xoffset=-(xxpl Mod 256)
 	yoffset=-(yypl Mod 256)
@@ -1507,18 +1426,12 @@ Function drawworldfloor(player.playerdef)
 	While(x<g_winwidth)
 		y=-256 + yoffset
 		While(y<=g_winheight)
-			;For y=-256 To g_winheight+256 Step 256
-			
 	
 			DrawBlock  ground,x,y
-			;drawblockrect todo, use this for speed performance
 				
 			y=y+256
 				
 		Wend
-		If(yypl=4460) Then
-	;		Stop 
-		EndIf 
 
 		x=x+256
 	Wend  
@@ -1555,7 +1468,6 @@ Function drawworldfloor(player.playerdef)
 					
 				
 					block.blockdef=worldblks(srcx,srcy)
-					;blockimg=worldblks_img(srcx,srcy)
 					
 					If(block\floorimage >0) Then 
 							
@@ -1593,7 +1505,6 @@ Function drawworldtiles(player.playerdef)
 		
 		blockposy=offy + y*blockh
 		
-		;srcy=basesrcy+y
 		srcy=TiledRange(basesrcy+y,0,playfieldmaxy)
 
 		
@@ -1602,7 +1513,7 @@ Function drawworldtiles(player.playerdef)
 		Else
 			For x=0 To blockwonscreen+1
 				
-				;srcx=basesrcx+x
+
 				srcx=TiledRange(basesrcx+x,0,playfieldmaxx)
 
 				
@@ -1612,7 +1523,6 @@ Function drawworldtiles(player.playerdef)
 				If(Not((srcx)<0 And (srcx)>playfieldw)) Then 
 
 					block.blockdef=worldblks(srcx,srcy)
-					;blockimg=worldblks_img(srcx,srcy)
 					drawn=0
 
 					If(block\image>0) Then 
@@ -1641,15 +1551,11 @@ Function drawworldtiles(player.playerdef)
 								
 								distance=(percent*64)/100
 								
-								;Stop 
 								pixels=64 + distance
 								If(pixels Mod 2 =1 ) Then pixels=pixels+1
 								
 								DrawImageRect image,blockposx,blockposy,0,0+pixels,blockw,blockh-pixels
 								DrawImageRect image,blockposx,blockposy+pixels,0,0,blockw,blockh-pixels
-	
-								;ypos=blockposy - blockh2				
-								;DrawImage  door_green,blockposx,ypos
 	
 								DrawImage  imgblocks(block\image),blockposx,blockposy
 								
@@ -1664,19 +1570,6 @@ Function drawworldtiles(player.playerdef)
 							
 						EndIf 	
 							
-						
-						
-						
-					
-						;If c_trace=1 Then 
-					
-							Color 0,255,0
-							;Text blockposx,blockposy,"Til "+block\code
-							;Text blockposx,blockposy,"X>"+srcx 
-							;Text blockposx,blockposy+15,"Y>"+srcy
-
-
-						;EndIf 
 						
 						If(block\hasflag=1) Then
 							
@@ -1712,21 +1605,7 @@ Function drawworldtiles(player.playerdef)
 
 							
 							
-							;Color 0,255,0
-							;Text blockposx,blockposy,"A "+block\effect
-							;Text blockposx,blockposy+20,"frame:"+frame
-
-							;Text blockposx,blockposy+40,"dY"+block\debug2	
-							
 						EndIf 
-						
-						If(block\damage>0) Then
-							
-									;Color 0,255,0
-									;Text blockposx+xoff,blockposy+yoff,"Damage "+block\damage								
-								
-						EndIf 						
-
 						
 					EndIf 
 					
@@ -1752,14 +1631,12 @@ Function drawmsktiles2(xxpl,yypl,frame)
 	tx=(g_winwidth2/2) + 2
 	ty=(g_winheight2/2) + 2
 
-	;Stop 
 	
 	collide=0
 	For y=0 To blockhonscreen+1
 		
 		blockposy=offy + y*blockh2
 		
-		;srcy=basesrcy+y
 		srcy=TiledRange(basesrcy+y,0,playfieldmaxy)
 
 		
@@ -1768,12 +1645,10 @@ Function drawmsktiles2(xxpl,yypl,frame)
 		Else
 			For x=0 To blockwonscreen+1
 				
-				;srcx=basesrcx+x
 				srcx=TiledRange(basesrcx+x,0,playfieldmaxx)
 
 				blockposx=offx + x*blockw2
 
-				;Stop				
 				If(Not((srcx)<0 And (srcx)>playfieldw)) Then 
 
 					blockimg=worldblks(srcx,srcy)\mskimage
@@ -1786,13 +1661,6 @@ Function drawmsktiles2(xxpl,yypl,frame)
 					Color 255,0,0
 					Text bx,by,":"+blockimg
 
-					;If(ImagesOverlap(imgblocks_msk(blockimg),bx,by, timg,tx,ty)) Then
-;
-;						If(ImagesCollide(imgblocks_msk(blockimg),bx,by,0, timg,tx,ty,frame)) Then
-;							collide=1
-;						EndIf 
-;						
-;					EndIf 
 				EndIf 
 			Next 
 		EndIf 
@@ -1813,7 +1681,8 @@ End Function
 
 
 Function movepixparticles(xoffset,yoffset)
-	;For Each b.bulletdef
+
+
 	For b.pixpartdef= Each pixpartdef
 			
 			If(b\used=1) Then
@@ -1847,13 +1716,12 @@ Function movepixparticles(xoffset,yoffset)
 End Function 
 
 Function movebullets()
-	;For Each b.bulletdef
+
+
 	For b.bulletdef= Each bulletdef
 			
 			If(b\used=1) Then
-
-;				If(g_debugstop=1 ) Then Stop 
-				
+			
 				b\x=b\x+b\dx
 				b\y=b\y+b\dy
 				
@@ -1953,10 +1821,6 @@ Global dontshoot=50
 
 Function collidePlayerWorld(player.playerdef)
     
-
-	;Stop 
-	;xoffset=-(xxpl Mod 256)
-	;yoffset=-(yypl Mod 256)
 		
 	xx=player\camerax0
 	yy=player\cameray0
@@ -1984,85 +1848,78 @@ Function collidePlayerWorld(player.playerdef)
 		
 		blockposy=offy + y*blockh
 		
-		;srcy=basesrcy+y
 		srcy=TiledRange(basesrcy+y,0,playfieldmaxy)
 
 		ymatch=((Int(player\y) / blockh) = srcy)
 		If(ymatch) Then thisblocky=srcy
 		
 		
-		;If((srcy)<0 Or (srcy)>playfieldh) Then 
-			;
-		;Else
+
 			For x=0 To blockwonscreen+1
 				
 				
 				
-				;srcx=basesrcx+x
+		
 				srcx=TiledRange(basesrcx+x,0,playfieldmaxx)
 
 				blockposx=offx + x*blockw
 				
 				
-				;Stop 
+			
 				If(ymatch) Then 
-				;Stop 
+		
 					xmatch=((Int(player\x) / blockw) = srcx)
 					If(xmatch) Then 
 						thisblockx=srcx
 						If(collide=0) Then collide=1
 						colisioninfo\driveover = worldblks(srcx,srcy)
 						
-						;worldblks(srcx,srcy)\image=2
-						
-						
+								
 					EndIf 
 					
 				EndIf 
 				
 				
-				;If(Not ((srcx)<0 And (srcx)>playfieldw)) Then 
+		
 					
 				
-					blockimg=worldblks(srcx,srcy)\mskimage
+				blockimg=worldblks(srcx,srcy)\mskimage
 
-					bx=blockposx/2
-					by=blockposy/2
-										
-					If(debugcollission=1) Then DrawImage  imgblocks_msk(blockimg),bx,by
+				bx=blockposx/2
+				by=blockposy/2
+									
+				If(debugcollission=1) Then DrawImage  imgblocks_msk(blockimg),bx,by
+				
+				If(ImagesOverlap(imgblocks_msk(blockimg),bx,by, timg,tx,ty)) Then
 					
-					If(ImagesOverlap(imgblocks_msk(blockimg),bx,by, timg,tx,ty)) Then
+					
+					If(worldblks(srcx,srcy)\hasflag=1 And player\alliedcode<> worldblks(srcx,srcy)\alliedcode) Then
 						
-						
-						If(worldblks(srcx,srcy)\hasflag=1 And player\alliedcode<> worldblks(srcx,srcy)\alliedcode) Then
-							
-								worldblks(srcx,srcy)\hasflag=0
-								player\hasflag=1
-								player\flagblock=worldblks(srcx,srcy)
+							worldblks(srcx,srcy)\hasflag=0
+							player\hasflag=1
+							player\flagblock=worldblks(srcx,srcy)
 
-						Else If(worldblks(srcx,srcy)\code=player\homecode And player\hasflag=1) Then
-							
-							; YOU WIN
-							Cls
-							Color 255,255,255
-							Text 0,0 , "YOU WIN"
-							Flip 
-							WaitKey 													
+					Else If(worldblks(srcx,srcy)\code=player\homecode And player\hasflag=1) Then
 						
-						Else
-							If(ImagesCollide(imgblocks_msk(blockimg),bx,by,0, timg,tx,ty,frame)) Then
-								collide=2
-								colisioninfo\collided = worldblks(srcx,srcy)
-								If(debugcollission=0) Then Exit 
-							EndIf 
+						; YOU WIN
+						Cls
+						Color 255,255,255
+						Text 0,0 , "YOU WIN"
+						Flip 
+						WaitKey 													
+					
+					Else
+						If(ImagesCollide(imgblocks_msk(blockimg),bx,by,0, timg,tx,ty,frame)) Then
+							collide=2
+							colisioninfo\collided = worldblks(srcx,srcy)
+							If(debugcollission=0) Then Exit 
 						EndIf 
-												
 					EndIf 
-					
+											
+				EndIf 
+				
 			
-				;EndIf 
 			Next 
-		;EndIf 
 		
 	Next 
 	
@@ -2093,15 +1950,15 @@ Function collidePlayerWorld(player.playerdef)
 	
 	If(collide>0) Then 
 		Color 255,255,0
-		;Text 200,200,"COLLISION:"+collide
-		
-		;If(collide=1) Then 
-		;	If ( colisioninfo\driveover\blocktype=bkt_door) Then 
+	;	Text 200,200,"COLLISION:"+collide
+	;	
+	;	If(collide=1) Then 
+	;		If ( colisioninfo\driveover\blocktype=bkt_door) Then 
 	;			Color 255,255,0
 	;			Text 200,220,"COLLISION1 Door"
 	;		EndIf 
-;		
-;		EndIf 
+	;		
+	;	EndIf 
 	EndIf 
 		
 	If(debugcollission=1) Then DrawImage(timg,tx,ty,frame)
@@ -2113,10 +1970,6 @@ End Function
 
 Function collideBulletsWorld2()
 
-
-	;blockw2=blockw/2
-	;blockh2=blockh/2
-
 	For b.bulletdef= Each bulletdef
 			
 		If(b\used=1 And b\id=1) Then
@@ -2124,13 +1977,11 @@ Function collideBulletsWorld2()
 							
 			For srcy=0 To playfieldw-1
 						
-;
 				yoff=((blockh*srcy )+g_winheight2 ) /2
 				
 				For srcx=0 To playfieldh-1
 						
 					xoff=((blockw*srcx ) +g_winwidth2) /2 
-;					
 					blockimg=worldblks(srcx,srcy)\mskimage
 					
 					If(ImagesOverlap(imgblocks_msk(blockimg),xoff,yoff, g_shell_mask,b\x/2,b\y/2)) Then
@@ -2171,9 +2022,6 @@ End Function
 Function collideBulletsWorld1(player.playerdef)
 
 
-	;blockw2=blockw/2
-	;blockh2=blockh/2
-
 	For b.bulletdef= Each bulletdef
 			
 			If(b\used=1 And b\id=1) Then
@@ -2186,11 +2034,6 @@ Function collideBulletsWorld1(player.playerdef)
 				bux=  TiledRange(bux  , 0 , maxx/2)
 				buy=  TiledRange(buy  , 0 , maxy/2)
 
-				;buy= (b\y - player\cameray0) / 2
-				
-				;tx=txo/2
-				;ty=tyo/2
-				;Stop 
 				xoffset=-(xxpl Mod 256)
 				yoffset=-(yypl Mod 256)
 					
@@ -2201,38 +2044,26 @@ Function collideBulletsWorld1(player.playerdef)
 				basesrcx=xx/blockw
 				offy=((basesrcy)*blockh)-yy
 				offx=((basesrcx)*blockw)-xx
-				;timg=tankimg_msk
-					
-				;collide=0
-				
-				;colisioninfo\collided=Null
-				;colisioninfo\driveover=Null
-				
 				
 				For y=0 To blockhonscreen+1
 					
 					blockposy=offy + y*blockh
-					
-					;srcy=basesrcy+y
+
 					srcy=TiledRange(basesrcy+y,0,playfieldmaxy)
 
 					
-					;If((srcy)<0 Or (srcy)>playfieldh) Then 
-						;
-					;Else
+
 					If True 
 						For x=0 To blockwonscreen+1
 							
 							
 							If(g_debugstop) Then Stop 
 
-							;srcx=basesrcx+x
 							srcx=TiledRange(basesrcx+x,0,playfieldmaxx)
 
 							blockposx=offx + x*blockw
 											
 							
-							;If(Not ((srcx)<0 And (srcx)>playfieldw)) Then 
 							If True 	
 							
 								blockimg=worldblks(srcx,srcy)\mskimage
@@ -2254,9 +2085,7 @@ Function collideBulletsWorld1(player.playerdef)
 										handleblockdamage(blo)
 										
 										If(blo\blocktype=bkt_rubble) Then
-										
-											;effects_blockexplode(srcx,srcy,blockposx,blockposy,xxpl,yypl)
-											
+																		
 											effects_blockexplode2(srcx,srcy)
 
 										EndIf 
@@ -2289,134 +2118,133 @@ End Function
 
 Function effects_explode(x,y)
 
-xx=x
-yy=y
-
-
-For t=1 To 50
-
-
-a#=Rand(0,360)
-
-rdx#=Cos(a) * (t * 50)
-rdy#=Sin(a) * (t * 50)
-
-xefx=xx+rdx
-yefx=yy+rdy
-
-
-If(t=1) Then
-	h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
-
-	Set3DSpriteVelocity(h,0,0)
-	Set3DSpriteFade(h,0.992)
-	Set3DSpriteBlowup(h,1.01)
-ElseIf(t=2) Then
-	h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
-
-	Set3DSpriteVelocity(h,0,0)
-	Set3DSpriteFade(h,0.97)
-	Set3DSpriteBlowup(h,1.28)
-Else
-	h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
-	Set3DSpriteVelocity(h,rdx/50,rdy/50)
-	Set3DSpriteFade(h,0.99)
-	Set3DSpriteBlowup(h,.98)
-
-EndIf 
-
-Next 
-
-For t=1 To 1000 Step 2
-
-	dist#=Rand(100,500)
-	dist=dist / 10
-	
-	a#=Rand(-20,20)
-	a=t+(a/10)
-	
-	xp#=Sin(a)*dist
-	yp#=Cos(a)*dist
-	
-	speed#=Rand(1,120)
-	speed=speed/20
-	
-	xs#=Sin(a)*speed
-	ys#=Cos(a)*speed
+	xx=x
+	yy=y
 	
 	
-	;Stop 
-	pox= g_winwidth2+x
-	poy= g_winheight2+y
+	For t=1 To 50
+	
+	
+	a#=Rand(0,360)
+	
+	rdx#=Cos(a) * (t * 50)
+	rdy#=Sin(a) * (t * 50)
+	
+	xefx=xx+rdx
+	yefx=yy+rdy
+	
+	
+	If(t=1) Then
+		h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
+	
+		Set3DSpriteVelocity(h,0,0)
+		Set3DSpriteFade(h,0.992)
+		Set3DSpriteBlowup(h,1.01)
+	ElseIf(t=2) Then
+		h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
+	
+		Set3DSpriteVelocity(h,0,0)
+		Set3DSpriteFade(h,0.97)
+		Set3DSpriteBlowup(h,1.28)
+	Else
+		h=New3DSprite(xx,yy,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
+		Set3DSpriteVelocity(h,rdx/50,rdy/50)
+		Set3DSpriteFade(h,0.99)
+		Set3DSpriteBlowup(h,.98)
+	
+	EndIf 
+	
+	Next 
+	
+	For t=1 To 1000 Step 2
+	
+		dist#=Rand(100,500)
+		dist=dist / 10
+		
+		a#=Rand(-20,20)
+		a=t+(a/10)
+		
+		xp#=Sin(a)*dist
+		yp#=Cos(a)*dist
+		
+		speed#=Rand(1,120)
+		speed=speed/20
+		
+		xs#=Sin(a)*speed
+		ys#=Cos(a)*speed
+		
+		
+	
+		pox= g_winwidth2+x
+		poy= g_winheight2+y
+	
 
-	;Stop 
-	p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
-Next 
+		p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
+	Next 
 
-;makedustparticles()
 											
 End Function
 
 
 Function effects_blockexplode2(srcx,srcy)
 
-blockposx=(srcx * blockw)
-blockposy=(srcy * blockh)  
-
-
-For t=1 To 10
-
-
-a#=Rand(0,360)
-
-rdx#=Cos(a) * (t * 5)
-rdy#=Sin(a) * (t * 5)
-
-xefx=(blockposx+blockw2)+rdx
-yefx=(blockposy+blockh2)+rdy
-
-h=New3DSprite(xefx,yefx,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
-
-If(t=1) Then
-	Set3DSpriteVelocity(h,0,0)
-	Set3DSpriteFade(h,0.98)
-	Set3DSpriteBlowup(h,1.01)
-Else
-	Set3DSpriteVelocity(h,-rdx/280,-rdy/280)
-	Set3DSpriteFade(h,0.98)
-	Set3DSpriteBlowup(h,.98)
-
-EndIf 
-
-Next 
-
-For t=1 To 1000 Step 3
-
-	dist#=Rand(100,500)
-	dist=dist / 10
-	
-	a#=Rand(-20,20)
-	a=t+(a/10)
-	
-	xp#=Sin(a)*dist
-	yp#=Cos(a)*dist
-	
-	speed#=Rand(1,120)
-	speed=speed/20
-	
-	xs#=Sin(a)*speed
-	ys#=Cos(a)*speed
+	blockposx=(srcx * blockw)
+	blockposy=(srcy * blockh)  
 	
 	
-	;Stop 
-	pox= (blockw/2)+blockw*srcx
-	poy= (blockh/2)+blockh*srcy
-
-	;Stop 
-	p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
-Next 
-
-;makedustparticles()
+	For t=1 To 10
+	
+	
+	a#=Rand(0,360)
+	
+	rdx#=Cos(a) * (t * 5)
+	rdy#=Sin(a) * (t * 5)
+	
+	xefx=(blockposx+blockw2)+rdx
+	yefx=(blockposy+blockh2)+rdy
+	
+	h=New3DSprite(xefx,yefx,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
+	
+	If(t=1) Then
+		Set3DSpriteVelocity(h,0,0)
+		Set3DSpriteFade(h,0.98)
+		Set3DSpriteBlowup(h,1.01)
+	Else
+		Set3DSpriteVelocity(h,-rdx/280,-rdy/280)
+		Set3DSpriteFade(h,0.98)
+		Set3DSpriteBlowup(h,.98)
+	
+	EndIf 
+	
+	Next 
+	
+	For t=1 To 1000 Step 3
+	
+		dist#=Rand(100,500)
+		dist=dist / 10
+		
+		a#=Rand(-20,20)
+		a=t+(a/10)
+		
+		xp#=Sin(a)*dist
+		yp#=Cos(a)*dist
+		
+		speed#=Rand(1,120)
+		speed=speed/20
+		
+		xs#=Sin(a)*speed
+		ys#=Cos(a)*speed
+		
+		
+		;Stop 
+		pox= (blockw/2)+blockw*srcx
+		poy= (blockh/2)+blockh*srcy
+	
+		;Stop 
+		p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
+	Next 
+	
+	;makedustparticles()
 											
 End Function
 
@@ -2424,59 +2252,59 @@ End Function
 
 Function effects_blockexplode(srcx,srcy,blockposx,blockposy,xxpl,yypl)
 
-For t=1 To 10
-
-
-a#=Rand(0,360)
-
-rdx#=Cos(a) * (t * 5)
-rdy#=Sin(a) * (t * 5)
-
-xefx=xxpl+(blockposx+blockw2)+rdx
-yefx=yypl+(blockposy+blockh2)+rdy
-
-h=New3DSprite(xefx,yefx,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
-
-If(t=1) Then
-	Set3DSpriteVelocity(h,0,0)
-	Set3DSpriteFade(h,0.98)
-	Set3DSpriteBlowup(h,1.05)
-Else
-	Set3DSpriteVelocity(h,-rdx/280,-rdy/280)
-	Set3DSpriteFade(h,0.98)
-	Set3DSpriteBlowup(h,.98)
-
-EndIf 
-
-Next 
-
-For t=1 To 1000 Step 3
-
-	dist#=Rand(100,500)
-	dist=dist / 10
-	
-	a#=Rand(-20,20)
-	a=t+(a/10)
-	
-	xp#=Sin(a)*dist
-	yp#=Cos(a)*dist
-	
-	speed#=Rand(1,120)
-	speed=speed/20
-	
-	xs#=Sin(a)*speed
-	ys#=Cos(a)*speed
+	For t=1 To 10
 	
 	
-	;Stop 
-	pox= (blockw/2)+g_winwidth2+blockw*srcx
-	poy= (blockh/2)+g_winheight2+blockh*srcy
-
-	;Stop 
-	p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
-Next 
-
-;makedustparticles()
+	a#=Rand(0,360)
+	
+	rdx#=Cos(a) * (t * 5)
+	rdy#=Sin(a) * (t * 5)
+	
+	xefx=xxpl+(blockposx+blockw2)+rdx
+	yefx=yypl+(blockposy+blockh2)+rdy
+	
+	h=New3DSprite(xefx,yefx,120/t,120/t,g_lighttexture,0 ,0,1.0,0.0,1)
+	
+	If(t=1) Then
+		Set3DSpriteVelocity(h,0,0)
+		Set3DSpriteFade(h,0.98)
+		Set3DSpriteBlowup(h,1.05)
+	Else
+		Set3DSpriteVelocity(h,-rdx/280,-rdy/280)
+		Set3DSpriteFade(h,0.98)
+		Set3DSpriteBlowup(h,.98)
+	
+	EndIf 
+	
+	Next 
+	
+	For t=1 To 1000 Step 3
+	
+		dist#=Rand(100,500)
+		dist=dist / 10
+		
+		a#=Rand(-20,20)
+		a=t+(a/10)
+		
+		xp#=Sin(a)*dist
+		yp#=Cos(a)*dist
+		
+		speed#=Rand(1,120)
+		speed=speed/20
+		
+		xs#=Sin(a)*speed
+		ys#=Cos(a)*speed
+		
+		
+		;Stop 
+		pox= (blockw/2)+g_winwidth2+blockw*srcx
+		poy= (blockh/2)+g_winheight2+blockh*srcy
+	
+		;Stop 
+		p.pixpartdef=newSimplePixParticle(pox+xp,poy+yp,xs,ys, 2,50+Rand(100),Rand(2000)+1000)
+	Next 
+	
+	;makedustparticles()
 											
 End Function 
 
@@ -2493,9 +2321,9 @@ End Function
 
 Function isroadtile(tile)
 	
-If(tile>=5 And tile<=16) Then Return True 
-
-If(tile=24 Or tile=36 Or tile=44 Or tile=67) Then Return True
+	If(tile>=5 And tile<=16) Then Return True 
+	
+	If(tile=24 Or tile=36 Or tile=44 Or tile=67) Then Return True
 
 End Function 
 
